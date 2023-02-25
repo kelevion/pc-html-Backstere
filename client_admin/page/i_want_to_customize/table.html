@@ -1,0 +1,591 @@
+<!-- 模板引擎 table 页面 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/diy.css">
+</head>
+
+<body>
+    <div class="section1">
+        <!-- 内容主体区域 -->
+        <div class="manu" style="padding: 15px;">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+
+                    <label class="layui-form-label">定制类别</label>
+                    <div class="layui-input-block">
+                        <select name="interest" lay-filter="custom_category" id="custom_category">
+                            <option value=""></option>
+                        </select>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="buts">
+            <button type="button" class="layui-btn layui-btn-normal" id="inquire">查询/Query</button>
+            <button type="button" class="layui-btn layui-btn-normal" id="reset">重置/Reset</button>
+            <button type="button" class="layui-btn layui-btn-normal" id="delete">删除/Del</button>
+            <a href="./view_add.html" type="button" class="layui-btn layui-btn-normal" target="main_self_frame"
+                id="add">新增/Add</a>
+        </div>
+
+
+        <div class="table">
+            <table class="layui-hide" id="i_want_to_customize" lay-filter="i_want_to_customize"></table>
+
+            <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+
+                
+                                    <button class="layui-btn layui-btn-sm" lay-event="pay">支付/Pay</button>
+                
+                
+                <button class="layui-btn layui-btn-sm" lay-event="detail">详情/Details</button>
+            </div>
+        </script>
+        </div>
+    </div>
+</body>
+<script src="../../layui/layui.js"></script>
+<script src="../../js/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    layui.use(['element', 'layer', 'util'], function () {
+        var element = layui.element
+            , layer = layui.layer
+            , util = layui.util
+            , table = layui.table
+            , $ = layui.$;
+
+        let personInfo = JSON.parse(sessionStorage.personInfo)
+        let user_group = personInfo.user_group
+        let use_id = personInfo.user_id
+        let url = 'http://127.0.0.1:5000/api/i_want_to_customize/get_list?like=0'
+
+        let deletes = document.querySelector('#delete')
+        let add = document.querySelector('#add')
+
+
+        let permissions = null
+
+
+        // 获取路径权限
+        async function get_list() {
+            let { data: ren } = await axios.get('http://127.0.0.1:5000/api/auth/get_list', {
+                params: {
+                    user_group: personInfo.user_group
+                }
+            })
+            permissions = ren.result.list
+            console.log(ren)
+            console.log(ren.result.list)
+        }
+
+        get_list()
+
+
+        // 权限判断
+        /**
+         * 获取路径对应操作权限 鉴权
+         * @param {String} action 操作名
+         */
+        function $check_action(path, action = "get") {
+            var o = $get_power(path);
+            if (o && o[action] != 0 && o[action] != false) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * 获取权限
+         * @param {String} path 路由路径
+         */
+        function $get_power(path) {
+            var list = permissions;
+            var obj;
+            for (var i = 0; i < list.length; i++) {
+                var o = list[i];
+                if (o.path === path) {
+                    obj = o;
+                    break;
+                }
+            }
+            return obj;
+        }
+
+        /**
+         * 注册时是否有显示或操作字段的权限
+         * @param {String} action 操作名
+         * @param {String} field 查询的字段
+         * @param {String} path 路径
+         */
+        function $check_register_field(action, field, path) {
+            var o = this.$get_power(path);
+            var auth;
+            if (o && o[action] != 0 && o[action] != false) {
+                auth = o["field_" + action];
+            }
+            if (auth) {
+                return auth.indexOf(field) !== -1;
+            }
+            return false;
+        }
+
+        /**
+         * 是否有显示或操作字段的权限
+         * @param {String} action 操作名
+         * @param {String} field 查询的字段
+         */
+        function $check_field(action, field) {
+            var o = this.$get_power(this.$route.path);
+            var auth;
+            if (o && o[action] != 0 && o[action] != false) {
+                auth = o["field_" + action];
+            }
+            if (auth) {
+                return auth.indexOf(field) !== -1;
+            }
+            return false;
+        }
+
+        /**
+         * 获取路径对应操作权限 鉴权
+         * @param {String} action 操作名
+         */
+        function $check_exam(path, action = "get") {
+            var o = this.$get_power(path);
+            if (o) {
+                var option = JSON.parse(o.option);
+                if (option[action])
+                    return true
+            }
+            return false;
+        }
+
+
+
+        setTimeout(function () {
+            if (user_group == '管理员' || $check_action('/i_want_to_customize/table', 'add') || $check_action('/i_want_to_customize/view', 'add')) {
+                add.style.display = 'block'
+            }
+        }, 200)
+
+        setTimeout(function () {
+            if (user_group == '管理员' || $check_action('/i_want_to_customize/table', 'del') || $check_action('/i_want_to_customize/view', 'del')) {
+                deletes.style.display = 'block'
+            }
+        }, 200)
+
+
+        /*             if(user_group != "管理员"){
+                switch(user_group){
+                                                                                                                    case "卖家":
+                                url += "&seller_account=" + user_id
+                                break;
+                                                                                                                                            case "":
+                                url += "&price=" + user_id
+                                break;
+                                                                                                                                            case "商城用户":
+                                url += "&user_number=" + user_id
+                                break;
+                                                                                                                                                                                                                                                                                case "":
+                                url += "&customized_video=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&customize_audio=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&required_date=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&custom_category=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&customization_details=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&picking_category=" + user_id
+                                break;
+                                                            }
+            }
+         */
+
+        let token = sessionStorage.token || null
+        table.render({
+            elem: '#i_want_to_customize'
+            , toolbar: true
+            , url: url
+            , headers: {
+                'x-auth-token': token,
+                'Content-Type': 'application/json'
+            }
+            , page: {
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                //,curr: 5
+                , groups: 1
+                , first: false
+                , last: false
+            }
+            , cols: [[
+                { type: 'checkbox', fixed: 'left' }
+
+                , { field: 'trade_name', width: 180, title: '商品名称', sort: true }
+                , { field: 'seller_account', width: 180, title: '卖家账号', sort: true }
+                //, {field: 'sex', title: '卖家账号', sort: true, width: 150}
+                , { field: 'purchase_quantity', width: 180, title: '购买数量', sort: true }
+                , { field: 'price', width: 180, title: '价格', sort: true }
+                , { field: 'total_amount', width: 180, title: '总金额', sort: true }
+                , { field: 'user_number', width: 180, title: '用户编号', sort: true }
+                //, {field: 'sex', title: '用户编号', sort: true, width: 150}
+                , { field: 'customized_requirements', width: 180, title: '定制要求', sort: true }
+                , { field: 'related_pictures', width: 180, title: '相关图片', sort: true }
+                , {
+                    field: 'related_pictures',
+                    title: '相关图片',
+                    width: 150,
+                    templet: '<div><img src="http://127.0.0.1:5000{{ d.related_pictures }}"></div>'
+                }
+                , { field: 'completion_time', width: 180, title: '完成时间', sort: true }
+                , {
+                    field: 'completion_time',
+                    title: '完成时间',
+                    sort: true,
+                    templet: "<div>{{layui.util.toDateString(d.completion_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+                , { field: 'relevant_attachments', width: 180, title: '相关附件', sort: true }
+                , { field: 'relevant_attachments', title: '相关附件', width: 150 }
+                , { field: 'customized_video', width: 180, title: '定制视频', sort: true }
+                , { field: 'customized_video', title: '定制视频', width: 150 }
+                , { field: 'customize_audio', width: 180, title: '定制音频', sort: true }
+                , { field: 'customize_audio', title: '定制音频', width: 150 }
+                , { field: 'required_date', width: 180, title: '要求日期', sort: true }
+                , {
+                    field: 'required_date',
+                    title: '要求日期',
+                    sort: true,
+                    width: 150,
+                    templet: "<div>{{layui.util.toDateString(d.required_date, 'yyyy-MM-dd')}}</div>"
+                }
+                , { field: 'custom_category', width: 180, title: '定制类别', sort: true }
+                , { field: 'picking_category', width: 180, title: '取货类别', sort: true }
+
+                , { field: 'examine_state', title: '审核状态', sort: true, width: 150 }
+
+
+                , { field: 'pay_state', title: '支付状态', sort: true, width: 150 }
+                , { field: 'pay_type', title: '支付类型', sort: true, width: 150 }
+
+                , {
+                    field: 'create_time',
+                    width: '20%',
+                    title: '新增时间',
+                    sort: true,
+                    templet: "<div>{{layui.util.toDateString(d.create_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+                , {
+                    field: 'update_time',
+                    width: '20%',
+                    title: '更新时间',
+                    sort: true,
+                    templet: "<div>{{layui.util.toDateString(d.update_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+
+                , { field: 'seat', title: '座位', sort: true, width: 150 }
+
+
+
+                , { field: 'operate', title: '操作', sort: true, width: '20%', fixed: 'right', toolbar: "#toolbarDemo" }
+            ]]
+
+            , done: function (res, curr, count) { // 表格渲染完成之后的回调
+                if (res.count == null) { // 无数据时直接返回了
+                    return;
+                }
+
+                var trade_name = res.data[0].trade_name
+                if (user_group !== '管理员' || !$check_field('get', 'trade_name')) {
+                    $("[data-field='trade_name']").css('display', 'none');
+                }
+                var seller_account = res.data[0].seller_account
+                if (user_group !== '管理员' || !$check_field('get', 'seller_account')) {
+                    $("[data-field='seller_account']").css('display', 'none');
+                }
+                var purchase_quantity = res.data[0].purchase_quantity
+                if (user_group !== '管理员' || !$check_field('get', 'purchase_quantity')) {
+                    $("[data-field='purchase_quantity']").css('display', 'none');
+                }
+                var price = res.data[0].price
+                if (user_group !== '管理员' || !$check_field('get', 'price')) {
+                    $("[data-field='price']").css('display', 'none');
+                }
+                var total_amount = res.data[0].total_amount
+                if (user_group !== '管理员' || !$check_field('get', 'total_amount')) {
+                    $("[data-field='total_amount']").css('display', 'none');
+                }
+                var user_number = res.data[0].user_number
+                if (user_group !== '管理员' || !$check_field('get', 'user_number')) {
+                    $("[data-field='user_number']").css('display', 'none');
+                }
+                var customized_requirements = res.data[0].customized_requirements
+                if (user_group !== '管理员' || !$check_field('get', 'customized_requirements')) {
+                    $("[data-field='customized_requirements']").css('display', 'none');
+                }
+                var related_pictures = res.data[0].related_pictures
+                if (user_group !== '管理员' || !$check_field('get', 'related_pictures')) {
+                    $("[data-field='related_pictures']").css('display', 'none');
+                }
+                var completion_time = res.data[0].completion_time
+                if (user_group !== '管理员' || !$check_field('get', 'completion_time')) {
+                    $("[data-field='completion_time']").css('display', 'none');
+                }
+                var relevant_attachments = res.data[0].relevant_attachments
+                if (user_group !== '管理员' || !$check_field('get', 'relevant_attachments')) {
+                    $("[data-field='relevant_attachments']").css('display', 'none');
+                }
+                var customized_video = res.data[0].customized_video
+                if (user_group !== '管理员' || !$check_field('get', 'customized_video')) {
+                    $("[data-field='customized_video']").css('display', 'none');
+                }
+                var customize_audio = res.data[0].customize_audio
+                if (user_group !== '管理员' || !$check_field('get', 'customize_audio')) {
+                    $("[data-field='customize_audio']").css('display', 'none');
+                }
+                var required_date = res.data[0].required_date
+                if (user_group !== '管理员' || !$check_field('get', 'required_date')) {
+                    $("[data-field='required_date']").css('display', 'none');
+                }
+                var custom_category = res.data[0].custom_category
+                if (user_group !== '管理员' || !$check_field('get', 'custom_category')) {
+                    $("[data-field='custom_category']").css('display', 'none');
+                }
+                var picking_category = res.data[0].picking_category
+                if (user_group !== '管理员' || !$check_field('get', 'picking_category')) {
+                    $("[data-field='picking_category']").css('display', 'none');
+                }
+
+
+                var seat = res.data[0].seat
+                if (user_group !== '管理员' || !$check_field('get', 'seat')) {
+                    $("[data-field='seat']").css('display', 'none');
+                }
+
+
+                // 重新渲染
+            }
+            , page: true,
+            request: {
+                limitName: 'size'
+            },
+            response: {
+                statusName: 'code', //规定返回/Back的状态码字段为code
+                statusCode: 200 //规定成功的状态码为200
+            },
+            parseData: function (res) {
+                return {
+                    "code": 200,
+                    "msg": "",
+                    "count": res.result.count,
+                    "data": res.result.list
+                }
+            },
+            where: { size: 10 }
+        });
+
+        table.on('tool(i_want_to_customize)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+
+                window.location.href = "./view_add.html?" + data.i_want_to_customize_id;
+            }
+
+
+
+            else if (obj.event === 'pay') {
+                layer.tab({
+                    area: ['600px', '600px'],
+                    tab: [{
+                        title: '微信',
+                        content: `<img src="../../img/wx.png" class="wx" class="wx" style="
+                        width: 400px;
+                        height: 400px;
+                        display:block;
+                        margin:auto;
+                        margin-top:30px;
+                        " /><button id="button" class="wxPay" style="
+                        width: 200px;
+                        height: 35px;
+                        margin-top: 20px;
+                        background: #82afd9;
+                        color: #fff;
+                        display:block;
+                        margin:auto;
+                        margin-top:30px;
+                        ">确认支付</button>`
+                    }, {
+                        title: '支付宝',
+                        content: `<img src="../../img/zfb.png" class="wx" class="zfb" style="
+                        width: 400px;
+                        height: 400px;
+                        display:block;
+                        margin:auto;
+                        margin-top:30px;
+                        " /><button id="button" class="zfbPay" style="
+                        width: 200px;
+                        height: 35px;
+                        margin-top: 20px;
+                        background: #82afd9;
+                        color: #fff;
+                        display:block;
+                        margin:auto;
+                        margin-top:30px;
+                        ">确认支付</button>`
+                    }, {
+                        title: '网银',
+                        content: `<label class="layui-form-label" style="
+                        width: 130px;
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: #86bebe;
+                        ">网银账号</label>
+                    <div class="layui-input-block block" style="
+                    margin-top:20px;
+                    margin-bottom:20px;
+                    ">
+                        <input type="text" name="title" required lay-verify="required" autocomplete="off"
+                            class="layui-input wyNumber"  placeholder="请输入网银账号" style="
+                            width:245px;
+                            ">
+                    </div>
+                    <label class="layui-form-label" style="
+                    width: 130px;
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: #86bebe;
+                    ">网银密码</label>
+                    <div class="layui-input-block block">
+                        <input type="text" name="title" required lay-verify="required" autocomplete="off"
+                            class="layui-input wyPass" placeholder="请输入网银密码" style="
+                            width:245px;
+                            ">
+                    </div>
+                    <button id="button" class="Pay" style="
+                    width: 200px;
+                        height: 35px;
+                        margin-top: 20px;
+                        background: #82afd9;
+                        color: #fff;
+                        display:block;
+                        margin:auto;
+                        margin-top:30px;
+                    ">支付/Pay</button>
+                    `
+                    }]
+                });
+            }
+        });
+
+        //下拉框
+
+
+
+        /*
+local("seller_account","卖家","seller_account")
+let seller_account
+layui.form.on('select(seller_account)', function (data) {
+// 拿到自定义属性的参数
+request['seller_account'] = $(data.elem).find("option:selected").attr("seller_account")
+});*/
+
+        /*
+local("user_number","商城用户","user_number")
+let user_number
+layui.form.on('select(user_number)', function (data) {
+// 拿到自定义属性的参数
+request['user_number'] = $(data.elem).find("option:selected").attr("user_number")
+});*/
+        inits('http://127.0.0.1:5000/api/classification_information/get_list?', "custom_category")
+        let custom_category
+        layui.form.on('select(custom_category)', function (data) {
+            request['custom_category'] = data.elem[data.elem.selectedIndex].text
+        });
+        // 定制类别选项列表
+        let custom_category_data = [""];
+        // 取货类别选项列表
+        let picking_category_data = ['送货上门', '快递'];
+        async function picking_category() {
+            var picking_category = document.querySelector("#picking_category")
+            var op1 = document.createElement("option");
+            op1.value = '0'
+            picking_category.appendChild(op1)
+            // 收集数据 长度
+            var count
+            // 收集数据 数组
+            var arr = []
+            count = picking_category_data.length
+            arr = picking_category_data
+            for (var i = 0; i < arr.length; i++) {
+                // 创建节点
+                var op = document.createElement("option");
+                // 给节点赋值
+                op.innerHTML = arr[i]
+                op.value = i + 1
+                // 新增/Add节点
+                picking_category.appendChild(op)
+                layui.form.render("select");
+            }
+        }
+
+        layui.form.on('select(picking_category)', function (data) {
+            request.picking_category = data.elem[data.elem.selectedIndex].text;
+        })
+        picking_category()
+
+        // 请求参数：
+        let request = {
+            like: 0, size: 10, page: 1,
+            "custom_category": "",
+            trade_name: "",
+            seller_account: "",
+            purchase_quantity: "",
+            price: "",
+            total_amount: "",
+            user_number: "",
+            customized_requirements: "",
+            related_pictures: "",
+            completion_time: "",
+            relevant_attachments: "",
+            customized_video: "",
+            customize_audio: "",
+            required_date: "",
+            custom_category: "",
+            customization_details: "",
+            picking_category: "",
+
+        }
+
+        // 重置/Reset参数
+        let resetName = { like: 0, size: 10, orderby: 'create_time desc' }
+
+        // 下拉框的重置/Reset参数
+        let resetSelect = []
+        //下拉框重置/Reset参数
+
+
+        resetSelect.push("seller_account")
+        resetSelect.push("user_number")
+        resetSelect.push("custom_category")
+        resetSelect.push("picking_category")
+        fun('i_want_to_customize', 'http://127.0.0.1:5000/api/i_want_to_customize/del', 'i_want_to_customize_id', request, resetName, resetSelect)
+    })
+</script>
+
+</html>

@@ -1,0 +1,116 @@
+<!-- 测试考试查看分数 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../layui/css/layui.css">
+  <link rel="stylesheet" href="../../css/diy.css">
+
+</head>
+
+<body>
+  <div class="section1">
+    <!-- 内容主体区域 -->
+    <div class="manu exam" style="padding: 15px;">
+      <form class="layui-form" action="" id="form">
+        <div class="layui-form-item" id="ez">
+        </div>
+        <div class="layui-form-item">
+          <div>
+            <label class="layui-form-label">确认/Confirm人</label>
+            <div class="layui-input-block">
+              <input type="text" name="title" required lay-verify="required" autocomplete="off" class="layui-input"
+                id="author" disabled>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="buts">
+        <a href="./table.html" target="main_self_frame" class="layui-btn layui-btn-normal">确认/Confirm</a>
+        <a href="./table.html" target="main_self_frame" class="layui-btn layui-btn-normal">取消/Cancel</a>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="../../layui/layui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  layui.use(['element', 'layer', 'util'], function () {
+    var element = layui.element
+      , table = layui.table
+      , layer = layui.layer
+      , util = layui.util
+      , form = layui.form
+      , $ = layui.$;
+    let value = location.search.substring(1)
+    let img
+    async function fff() {
+      const { data: rese } = await axios.get('http://127.0.0.1:5000/api/exam_question/get_list', {
+        params: {
+          exam_id: value
+        }
+      })
+
+      const { data: res } = await axios.get('http://127.0.0.1:5000/api/user/get_obj', {
+        params: {
+          user_id: value
+        }
+      })
+
+      console.log(res.result.obj)
+      img = rese.result.list
+      if (rese) {
+        console.log(img);
+        for (i = 0; i < img.length; i++) {
+          var ez = document.querySelector("#ez")
+          var li = document.createElement('div')
+          li.innerHTML = `${i + 1}.${img[i].type}：${img[i].title}（${img[i].score}分）`
+          ez.appendChild(li);
+          var str = img[i].question_item;
+          var arr = str.split("\n", 3);
+          for (var j = 0; j < arr.length; j++) {
+            var div = document.createElement('div')
+            li.appendChild(div);
+            if (img[i].type == "多选题") {
+              var div = document.createElement('div')
+              li.appendChild(div);
+              var ll = document.createElement('input')
+              ll.type = "checkbox"
+              ll.setAttribute('lay-skin', 'primary')
+              ll.value = "男"
+              ll.title = arr[j]
+              ll.name = "sex"
+              div.insertBefore(ll, div.childNodes[0])
+              layui.form.render("checkbox")
+            }
+            if (img[i].type == "判断题" || img[i].type == "单选题") {
+              li.appendChild(div);
+              var ll = document.createElement('input')
+              div.innerHTML = arr[j]
+              ll.type = "radio"
+              ll.value = ""
+              ll.name = "sex"
+              div.insertBefore(ll, div.childNodes[0])
+              layui.form.render("radio")
+            }
+          }
+          if (img[i].type == "主观题") {
+            var input = document.createElement('textarea')
+            li.appendChild(input);
+            input.className = "layui-textarea"
+          }
+        }
+      }
+
+      let author = document.querySelector('#author')
+      author.value = `${res.result.obj.username}-${res.result.obj.nickname}`
+    }
+    fff()
+  })
+</script>
+
+</html>

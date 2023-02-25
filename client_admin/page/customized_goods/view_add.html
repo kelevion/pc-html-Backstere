@@ -1,0 +1,815 @@
+<!-- 新增/Add -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/diy.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        img {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+<article class="sign_in">
+    <div class="warp">
+        <div class="layui-container">
+            <div class="layui-row">
+                <form class="layui-form" action="">
+                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">商品名称</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入商品名称"
+                                                       class="layui-input" id="trade_name">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">库存</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入库存"
+                                                       class="layui-input" id="stock">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">文件</label>
+                                            <div class="layui-upload-drag" id="enclosure">
+                                                <i class="layui-icon"></i>
+                                                <p>将文件拖到此处,或点击上传</p>
+                                                <div class="layui-hide" id="enclosure">
+                                                    <hr>
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                        <div class="layui-upload">
+                                        <button type="button" class="layui-btn" id="picture">上传图片</button>
+                                        <div class="layui-upload-list">
+                                            <img class="layui-upload-img" id="picture_img">
+                                            <p id="demoText"></p>
+                                        </div>
+                                        <div style="width: 95px;">
+                                            <div class="layui-progress layui-progress-big" lay-showpercent="yes"
+                                                 lay-filter="picture">
+                                                <div class="layui-progress-bar" lay-percent=""></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">视频</label>
+                                            <div class="layui-upload-drag" id="video">
+                                                <i class="layui-icon"></i>
+                                                <p>将视频拖到此处,或点击上传</p>
+                                                <div class="layui-hide" id="video">
+                                                    <hr>
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">音频</label>
+                                            <div class="layui-upload-drag" id="audio_frequency">
+                                                <i class="layui-icon"></i>
+                                                <p>将音频拖到此处,或点击上传</p>
+                                                <div class="layui-hide" id="audio_frequency">
+                                                    <hr>
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                        <div class="layui-form-item layui-form-text">
+                                        <label class="layui-form-label">备注</label>
+                                        <div class="layui-input-block">
+                                            <textarea placeholder="请输入备注" class="layui-textarea"
+                                                      id="remarks"></textarea>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                                                                                                        <div class="layui-form-item">
+                                                <label class="layui-form-label">卖家账号</label>
+                                                <div class="layui-input-block">
+                                                    <select name="interest" lay-filter="seller_account_number"
+                                                            id="seller_account_number">
+                                                        <option value=""></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                        <label class="layui-form-label">商品类别</label>
+                                        <div class="layui-input-block">
+                                            <select name="interest" lay-filter="commodity_category" id="commodity_category">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">价格</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入价格"
+                                                       class="layui-input" id="price">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                    <div class="layui-form-item">
+                                    <label class="layui-form-label">详情</label>
+                                    <div class="layui-input-block">
+                                        <textarea id="demo" style="display: none;"></textarea>
+                                    </div>
+                                </div>
+                                                                                                                                                    <div class="layui-form-item">
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">生产时间</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" class="layui-input" id="production_time"
+                                                       placeholder="yyyy-MM-dd HH:mm:ss">
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                    <div class="layui-form-item">
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">日期</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" class="layui-input" id="date"
+                                                       placeholder="yyyy-MM-dd HH:mm:ss">
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">是否特价</label>
+                                        <div class="layui-input-block">
+                                            <select name="interest" lay-filter="special_price_or_not" id="special_price_or_not">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                                                                                                                        <div class="layui-form-item">
+                                <label class="layui-form-label">审核状态</label>
+                                <div class="layui-input-block">
+                                    <select name="interest" lay-filter="examine_state" id="examine_state">
+                                        <option value=""></option>
+                                        <option value="0">未审核</option>
+                                        <option value="1">已通过</option>
+                                        <option value="2">未通过</option>
+                                    </select>
+                                </div>
+                            </div>
+                        
+                                                                            <div class="layui-form-item">
+                                <div class="layui-upload">
+                                    <label class="layui-form-label">二维码图片</label>
+                                    <button type="button" class="layui-btn" id="qrcode_img">上传图片</button>
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="qrcode_img1">
+                                        <p id="text"></p>
+                                    </div>
+                                    <div style="width: 95px;">
+                                        <div class="layui-progress layui-progress-big" lay-showpercent="yes"
+                                             lay-filter="qrcode_img">
+                                            <div class="layui-progress-bar" lay-percent=""></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 10px;"></div>
+                            </div>
+                            <!-- 上传图片结束 -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">二维码标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                           placeholder="请输入二维码标题"
+                                           class="layui-input" id="qrcode_title">
+                                </div>
+                            </div>
+                        
+                                                    <div class="layui-form-item">
+                                <label class="layui-form-label">计时器标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                           placeholder="请输入计时器标题"
+                                           class="layui-input" id="timer_title">
+                                </div>
+                            </div>
+                            <!--  选择时间开始  -->
+                            <div class="layui-form">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">日期范围</label>
+                                        <div class="layui-inline" id="customized_goods_time">
+                                            <div class="layui-input-inline">
+                                                <input type="text" autocomplete="off" id="test-startDate"
+                                                       class="layui-input"
+                                                       placeholder="选择计时器开始时间">
+                                            </div>
+                                            <div class="layui-form-mid">-</div>
+                                            <div class="layui-input-inline">
+                                                <input type="text" autocomplete="off" id="test-endDate-1"
+                                                       class="layui-input"
+                                                       placeholder="选择计时器结束时间">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                                                    <div class="layui-form-item">
+                                <label class="layui-form-label">限制次数</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                           placeholder="限制次数"
+                                           class="layui-input" id="limit_times">
+                                </div>
+                            </div>
+                                                                                    </form>
+                <div class="layui-btn-container">
+                    <a href="#" type="button" class="layui-btn layui-btn-normal login" id="submit">确认/Confirm</a>
+                    <a href="./table.html" target="main_self_frame" type="button"
+                       class="layui-btn layui-btn-normal login">取消/Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+</body>
+<script src="../../layui/layui.js"></script>
+<script>
+    layui.use(['upload', 'element', 'layer', 'laydate', 'layedit'], function () {
+        var $ = layui.jquery
+                , upload = layui.upload
+                , element = layui.element
+                , layer = layui.layer
+                , laydate = layui.laydate
+                , layedit = layui.layedit
+                , form = layui.form;
+
+        let url
+
+        let token = sessionStorage.token || null
+
+                    var uploadInst = upload.render({
+                elem: '#qrcode_img'
+                , url: 'http://127.0.0.1:5000/api/customized_goods/upload?' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
+                , headers: {
+                    'x-auth-token': token
+                }, before: function (obj) {
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function (index, file, result) {
+                        $('#qrcode_img1').attr('src', result); //图片链接（base64）
+                    });
+
+                    element.progress('qrcode_img', '0%'); //进度条复位
+                    layer.msg('上传中', {icon: 16, time: 0});
+                }
+                , done: function (res) {
+                    //如果上传失败
+                    if (res.code > 0) {
+                        return layer.msg('上传失败');
+                    }
+                    //上传成功的一些操作
+                    //……
+                    form_data2.qrcode_img = res.result.url
+                    $('#demoText').html(''); //置空上传失败的状态
+                }
+                , error: function () {
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function () {
+                        uploadInst.upload();
+                    });
+                }
+                //进度条
+                , progress: function (n, elem, e) {
+                    element.progress('qrcode_img', n + '%'); //可配合 layui 进度条元素使用
+                    if (n == 100) {
+                        layer.msg('上传完毕', {icon: 1});
+                    }
+                }
+            })
+        
+        let submit = document.querySelector('#submit')
+
+                    let field = "customized_goods_id";
+            let url_add = "customized_goods";
+            let url_set = "customized_goods";
+            let url_get_obj = "customized_goods";
+            let url_upload = "customized_goods"
+            let query = {
+                "customized_goods_id": 0,
+            }
+
+            let form_data2 = {
+                                                        "trade_name":  '', // 商品名称
+                                                                            "stock":  0, // 库存
+                                                                            "enclosure":  '', // 附件
+                                                                            "picture":  '', // 图片
+                                                                            "video":  '', // 视频
+                                                                            "audio_frequency":  '', // 音频
+                                                                            "remarks":  '', // 备注
+                                                                                "seller_account_number": 0, // 卖家账号
+                                                                            "commodity_category":  '', // 商品类别
+                                                                            "price":  0, // 价格
+                                                                            "details":  '', // 详情
+                                                                            "production_time":  '', // 生产时间
+                                                                            "date":  '', // 日期
+                                                                            "special_price_or_not":  '', // 是否特价
+                                                                        "examine_state": "未审核",
+                                                                "customized_goods_id": 0, // ID
+                                    "qrcode_img": '', // 图片
+                    "qrcode_title": '', // 二维码标题
+                                                                    "timer_title": '', // 计时器标题
+                    "timing_start_time": '', // 计时开始时间
+                    "timing_end_time": '', // 计时结束时间
+                                                    "limit_times": "", // 限制次数
+                                            "limit_type": 2,
+                                                                }
+
+                                                                                                                                                                                                                                                                        //常规使用 - 普通图片上传
+                        var uploadInst = upload.render({
+                            elem: '#picture'
+                            , url: 'http://127.0.0.1:5000/api/customized_goods/upload?' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
+                            , headers: {
+                                'x-auth-token': token
+                            }, before: function (obj) {
+                                //预读本地文件示例，不支持ie8
+                                obj.preview(function (index, file, result) {
+                                    $('#picture_img').attr('src', result); //图片链接（base64）
+                                });
+
+                                element.progress('picture', '0%'); //进度条复位
+                                layer.msg('上传中', {icon: 16, time: 0});
+                            }
+                            , done: function (res) {
+                                //如果上传失败
+                                if (res.code > 0) {
+                                    return layer.msg('上传失败');
+                                }
+                                //上传成功的一些操作
+                                //……
+                                form_data2.picture = res.result.url
+                                $('#demoText').html(''); //置空上传失败的状态
+                            }
+                            , error: function () {
+                                //演示失败状态，并实现重传
+                                var demoText = $('#demoText');
+                                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                                demoText.find('.demo-reload').on('click', function () {
+                                    uploadInst.upload();
+                                });
+                            }
+                            //进度条
+                            , progress: function (n, elem, e) {
+                                element.progress('picture', n + '%'); //可配合 layui 进度条元素使用
+                                if (n == 100) {
+                                    layer.msg('上传完毕', {icon: 1});
+                                }
+                            }
+                        });
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        var demo = layedit.build('demo', {
+                        tool: [
+                            'strong' //加粗
+                            , 'italic' //斜体
+                            , 'underline' //下划线
+                            , 'del' //删除/Del线
+
+                            , '|' //分割线
+
+                            , 'left' //左对齐
+                            , 'center' //居中对齐
+                            , 'right' //右对齐
+                            , 'link' //超链接
+                            , 'unlink' //清除链接
+                            , 'face' //表情
+                            , 'image' //插入图片
+                            , 'help' //帮助
+                        ]
+                    });
+                                                                                                                                                                                                                                        
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                                                // 商品类别选项列表
+                    let commodity_category_data = [""];
+                
+                            
+                            
+                            
+                            
+                                                // 是否特价选项列表
+                    let special_price_or_not_data = ['是','否'];
+                
+            
+                                                                                                                                            upload.render({
+                            elem: '#enclosure'
+                            , url: 'http://127.0.0.1:5000/api/customized_goods/upload'
+                            , headers: {
+                                'x-auth-token': token
+                            } //此处配置你自己的上传接口即可
+                            , accept: 'file' //普通文件
+                            , done: function (res) {
+                                layer.msg('上传成功');
+                                form_data2.enclosure = res.result.url
+                            }
+                        });
+                                                                                                                                        // 上传视频
+                        upload.render({
+                            elem: '#video'
+                            , url: 'http://127.0.0.1:5000/api/customized_goods/upload'
+                            , headers: {
+                                'x-auth-token': token
+                            } //此处配置你自己的上传接口即可
+                            , accept: 'video' //视频
+                            , done: function (res) {
+                                layer.msg('上传成功');
+                                form_data2.video = res.result.url
+                            }
+                        });
+                                                                                                            // 上传音频
+                        upload.render({
+                            elem: '#audio_frequency'
+                            , url: 'http://127.0.0.1:5000/api/customized_goods/upload'
+                            , headers: {
+                                'x-auth-token': token
+                            }
+                            , accept: 'audio' //音频
+                            , done: function (res) {
+                                layer.msg('上传成功');
+                                form_data2.audio_frequency = res.result.url
+                            }
+                        });
+                                                                                                                                                                                                                                                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                    laydate.render({
+                        elem: '#production_time'
+                        , type: 'datetime'
+                        , done: function (value) {
+                            console.log(value)
+                            form_data2.production_time = value
+                        }
+                    });
+                                                                                // 日期选择
+                    laydate.render({
+                        elem: '#date'
+                        , format: 'yyyy-MM-dd'
+                        , done: function (value) {
+                            form_data2.date = value + ' 00:00:00'
+                        }
+                    });
+                
+                                                                            
+                                                            
+                            laydate.render({
+                    elem: '#customized_goods_time',
+                    type: 'datetime'
+                    , range: ['#test-startDate', '#test-endDate-1'],
+                    done: function (value, data, endData) {
+                        let i = value
+                        let k = i.substring(0, 20)
+                        let j = i.substring(21, 41)
+                        form_data2.timing_start_time = k
+                        form_data2.timing_end_time = j
+                    }
+                });
+            
+                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                    async function seller_account_number() {
+                        var seller_account_number = document.querySelector("#seller_account_number")
+                        var op1 = document.createElement("option");
+                        op1.value = '0'
+                            seller_account_number.appendChild(op1)
+                        // 收集数据 长度
+                        var count
+                        // 收集数据 数组
+                        var arr = []
+                        let {data: res} = await axios.get('http://127.0.0.1:5000/api/user/get_list?user_group=卖家')
+                        count = res.result.count
+                        arr = res.result.list
+                        for (var i = 0; i < arr.length; i++) {
+                            // 创建节点
+                            var op = document.createElement("option");
+                            // 给节点赋值
+                            op.innerHTML = arr[i].username + "--" + arr[i].nickname
+                            op.value = arr[i].user_id
+                            // 新增/Add节点
+                                seller_account_number.appendChild(op)
+                            layui.form.render("select");
+                        }
+                    }
+
+                    layui.form.on('select(seller_account_number)', function (data) {
+                        form_data2.seller_account_number = Number(data.elem[data.elem.selectedIndex].value);
+                    })
+                        seller_account_number()
+                                                                async function commodity_category() {
+                        var commodity_category = document.querySelector("#commodity_category")
+                        var op1 = document.createElement("option");
+                        op1.value = '0'
+                            commodity_category.appendChild(op1)
+                        // 收集数据 长度
+                        var count
+                        // 收集数据 数组
+                        var arr = []
+                        let {data: res} = await axios.get('http://127.0.0.1:5000/api/classification_information/get_list')
+                        count = res.result.count
+                        arr = res.result.list
+                        for (var i = 0; i < arr.length; i++) {
+                            // 创建节点
+                            var op = document.createElement("option");
+                            // 给节点赋值
+                            op.innerHTML = arr[i].commodity_category
+                            op.value = i + 1
+                            // 新增/Add节点
+                                commodity_category.appendChild(op)
+                            layui.form.render("select");
+                        }
+                    }
+
+                    layui.form.on('select(commodity_category)', function (data) {
+                        form_data2.commodity_category = data.elem[data.elem.selectedIndex].text;
+                    })
+                        commodity_category()
+                                
+                                                            
+                                                            
+                                                            
+                                                            
+                                                                                async function special_price_or_not() {
+                        var special_price_or_not = document.querySelector("#special_price_or_not")
+                        var op1 = document.createElement("option");
+                        op1.value = '0'
+                            special_price_or_not.appendChild(op1)
+                        // 收集数据 长度
+                        var count
+                        // 收集数据 数组
+                        var arr = []
+                        count = special_price_or_not_data.length
+                        arr = special_price_or_not_data
+                        for (var i = 0; i < arr.length; i++) {
+                            // 创建节点
+                            var op = document.createElement("option");
+                            // 给节点赋值
+                            op.innerHTML = arr[i]
+                            op.value = i + 1
+                            // 新增/Add节点
+                                special_price_or_not.appendChild(op)
+                            layui.form.render("select");
+                        }
+                    }
+
+                    layui.form.on('select(special_price_or_not)', function (data) {
+                        form_data2.special_price_or_not = data.elem[data.elem.selectedIndex].text;
+                    })
+                        special_price_or_not()
+                
+                                                        layui.form.on('select(examine_state)', function (data) {
+                    form_data2.examine_state = data.elem[data.elem.selectedIndex].text;
+                })
+            
+                                                //文本
+                    let trade_name = document.querySelector("#trade_name")
+                    //文本
+                                                                                                                //数字
+                    let stock = document.querySelector("#stock")
+                    //数字
+                                                                                                                                                                                                                                                                                                                                                                //多文本
+                    let remarks = document.querySelector("#remarks")
+                    //多文本
+                                                                                                                                                                                                        //数字
+                    let price = document.querySelector("#price")
+                    //数字
+                                                                                                                                                                                                                                                                                                        
+            let customized_goods = location.search.substring(1)
+            if (customized_goods !== '') {
+                async function axios_get_3() {
+                    const {data: rese} = await axios.get('http://127.0.0.1:5000/api/customized_goods/get_obj', {
+                        params: {
+                                customized_goods_id: customized_goods
+                        }
+                    })
+
+                    let data = rese.result.obj
+                    Object.keys(form_data2).forEach((key) => {
+                        form_data2[key] = data[key];
+                    });
+                    console.log(form_data2)
+                                            qrcode_title.value = form_data2.qrcode_title
+                        qrcode_img1.src = 'http://127.0.0.1:5000' + form_data2.qrcode_img
+                    
+                                            for (let key in data) {
+                            if (key == 'examine_state') {
+                                let alls = document.querySelector('#examine_state').querySelectorAll('option')
+                                let test = data[key]
+                                for (let i = 0; i < alls.length; i++) {
+                                    if (alls[i].innerHTML == test) {
+                                        alls[i].selected = true
+                                        layui.use('form', function () {
+                                            var form = layui.form;
+                                            form.render("select");
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                                                                
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                                        for (let key in data) {
+                                if (key == 'seller_account_number') {
+                                    let alls = document.querySelector('#seller_account_number').querySelectorAll('option')
+                                    let test = data[key]
+                                    for (let i = 0; i < alls.length; i++) {
+                                        if (alls[i].value == test) {
+                                            alls[i].selected = true
+                                            layui.use('form', function () {
+                                                var form = layui.form;
+                                                form.render("select");
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        
+                                                                        for (let key in data) {
+                                if (key == 'commodity_category') {
+                                    let alls = document.querySelector('#commodity_category').querySelectorAll('option')
+                                    let test = data[key]
+                                    for (let i = 0; i < alls.length; i++) {
+                                        if (alls[i].innerHTML == test) {
+                                            alls[i].selected = true
+                                            layui.use('form', function () {
+                                                var form = layui.form;
+                                                form.render("select");
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        
+                                            
+                                            
+                                            
+                                            
+                                                                        for (let key in data) {
+                                if (key == 'special_price_or_not') {
+                                    let alls = document.querySelector('#special_price_or_not').querySelectorAll('option')
+                                    let test = data[key]
+                                    for (let i = 0; i < alls.length; i++) {
+                                        if (alls[i].innerHTML == test) {
+                                            alls[i].selected = true
+                                            layui.use('form', function () {
+                                                var form = layui.form;
+                                                form.render("select");
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        
+                                        console.log(form_data2)
+                                                                        //文本
+                                trade_name.value = form_data2.trade_name
+                            //文本
+                                                                                                                                                                        //数字
+                                stock.value = form_data2.stock
+                            //数字
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        //多文本
+                                remarks.value = form_data2.remarks
+                            //多文本
+                                                                                                                                                                                                                                                                                                                //数字
+                                price.value = form_data2.price
+                            //数字
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                limit_times.value = form_data2.limit_times
+                                                                timer_title.value = form_data2.timer_title
+                        let test_startDate_1 = document.querySelector('#test-startDate')
+                        let test_startDate_2 = document.querySelector('#test-endDate-1')
+                        test_startDate_1.value = layui.util.toDateString(form_data2.timing_start_time, "yyyy-MM-dd HH:mm:ss")
+                        test_startDate_2.value = layui.util.toDateString(form_data2.timing_end_time, "yyyy-MM-dd HH:mm:ss")
+                                                                                                                                        
+                                                                                                
+                                                                                                
+                                                                                                        let picture_img = document.querySelector("#picture_img")
+                                    picture_img.src = 'http://127.0.0.1:5000' + form_data2.picture
+                                                    
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                                            
+                                                                                                
+                                                                                                
+                                                                        layedit.setContent(demo, form_data2.details)
+                        
+                                                                                                            production_time.value = layui.util.toDateString(form_data2.production_time, "yyyy-MM-dd HH:mm:ss")
+                                                    
+                                                                                                            date.value = layui.util.toDateString(form_data2.date, "yyyy-MM-dd HH:mm:ss")
+                                                    
+                                                                                                
+                                        layui.form.render("select");
+                }
+
+                axios_get_3()
+            }
+
+
+            submit.onclick = async function () {
+                try {
+                                                                                                                                                    //文本
+                            form_data2.trade_name = trade_name.value
+                            //文本
+                                                                                                                                                                                                                                                    //数字
+                            form_data2.stock = stock.value
+                            //数字
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                //多文本
+                            form_data2.remarks = remarks.value
+                            //多文本
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                //数字
+                            form_data2.price = price.value
+                            //数字
+                                                                                                                        form_data2.details = layedit.getContent(demo)
+                                                                                                                                                                                                        form_data2.production_time = layui.util.toDateString(form_data2.production_time, "yyyy-MM-dd HH:mm:ss")
+                                                                                                                                                                                                                                    form_data2.date = layui.util.toDateString(form_data2.date, "yyyy-MM-dd HH:mm:ss")
+                                                                                                                                                                                                                                                                                                                                        } catch (err) {
+                    console.log(err)
+                }
+                                                    let qrcode_title = document.querySelector("#qrcode_title")
+                    form_data2.qrcode_title = qrcode_title.value
+                                
+                                    let limit_times = document.querySelector("#limit_times")
+                    form_data2.limit_times = Number(limit_times.value)
+                    limit_times.value = form_data2.limit_times
+                                                    let timer_title = document.querySelector("#timer_title")
+                    form_data2.timer_title = timer_title.value
+                    form_data2.timing_end_time = layui.util.toDateString(form_data2.timing_end_time, "yyyy-MM-dd HH:mm:ss")
+                    form_data2.timing_start_time = layui.util.toDateString(form_data2.timing_start_time, "yyyy-MM-dd HH:mm:ss")
+                
+                if (customized_goods == '') {
+                    console.log("新增/Add")
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/customized_goods/add?',
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                                        if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                } else {
+                    console.log("详情/Details")
+                    
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/customized_goods/set?customized_goods_id=' +customized_goods,
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                    if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                }
+            }
+        
+    })
+    ;
+</script>
+
+</html>

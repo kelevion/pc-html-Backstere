@@ -1,0 +1,548 @@
+<!-- 模板引擎 table 页面 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/diy.css">
+</head>
+
+<body>
+    <div class="section1">
+        <!-- 内容主体区域 -->
+        <div class="manu" style="padding: 15px;">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+
+                    <label class="layui-form-label">商品名称</label>
+                    <div class="layui-input-block block">
+                        <input type="text" name="title" required lay-verify="required" autocomplete="off"
+                            class="layui-input">
+                    </div>
+                    <label class="layui-form-label">商品类别</label>
+                    <div class="layui-input-block">
+                        <select name="interest" lay-filter="commodity_category" id="commodity_category">
+                            <option value=""></option>
+                        </select>
+                    </div>
+
+                    <label class="layui-form-label">是否特价</label>
+                    <div class="layui-input-block">
+                        <select name="interest" lay-filter="special_price_or_not" id="special_price_or_not">
+                            <select name="special_price_or_not" lay-filter="special_price_or_not"
+                                id="special_price_or_not">
+                                <option value=""></option>
+                            </select>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="buts">
+            <button type="button" class="layui-btn layui-btn-normal" id="inquire">查询/Query</button>
+            <button type="button" class="layui-btn layui-btn-normal" id="reset">重置/Reset</button>
+            <button type="button" class="layui-btn layui-btn-normal" id="delete">删除/Del</button>
+            <a href="./view_add.html" type="button" class="layui-btn layui-btn-normal" target="main_self_frame"
+                id="add">新增/Add</a>
+        </div>
+
+
+        <div class="table">
+            <table class="layui-hide" id="customized_goods" lay-filter="customized_goods"></table>
+
+            <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+
+                                                            <!--跨表按钮-->
+                                                    <button class="layui-btn layui-btn-sm" lay-event="bank">定制</button>
+                                                            
+                
+                                    <button class="layui-btn layui-btn-sm" lay-event="comments">查看评论</button>
+                
+                <button class="layui-btn layui-btn-sm" lay-event="detail">详情/Details</button>
+            </div>
+        </script>
+        </div>
+    </div>
+</body>
+<script src="../../layui/layui.js"></script>
+<script src="../../js/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    layui.use(['element', 'layer', 'util'], function () {
+        var element = layui.element
+            , layer = layui.layer
+            , util = layui.util
+            , table = layui.table
+            , $ = layui.$;
+
+        let personInfo = JSON.parse(sessionStorage.personInfo)
+        let user_group = personInfo.user_group
+        let use_id = personInfo.user_id
+        let url = 'http://127.0.0.1:5000/api/customized_goods/get_list?like=0'
+
+        let deletes = document.querySelector('#delete')
+        let add = document.querySelector('#add')
+
+
+        let permissions = null
+
+
+        // 获取路径权限
+        async function get_list() {
+            let { data: ren } = await axios.get('http://127.0.0.1:5000/api/auth/get_list', {
+                params: {
+                    user_group: personInfo.user_group
+                }
+            })
+            permissions = ren.result.list
+            console.log(ren)
+            console.log(ren.result.list)
+        }
+
+        get_list()
+
+
+        // 权限判断
+        /**
+         * 获取路径对应操作权限 鉴权
+         * @param {String} action 操作名
+         */
+        function $check_action(path, action = "get") {
+            var o = $get_power(path);
+            if (o && o[action] != 0 && o[action] != false) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * 获取权限
+         * @param {String} path 路由路径
+         */
+        function $get_power(path) {
+            var list = permissions;
+            var obj;
+            for (var i = 0; i < list.length; i++) {
+                var o = list[i];
+                if (o.path === path) {
+                    obj = o;
+                    break;
+                }
+            }
+            return obj;
+        }
+
+        /**
+         * 注册时是否有显示或操作字段的权限
+         * @param {String} action 操作名
+         * @param {String} field 查询的字段
+         * @param {String} path 路径
+         */
+        function $check_register_field(action, field, path) {
+            var o = this.$get_power(path);
+            var auth;
+            if (o && o[action] != 0 && o[action] != false) {
+                auth = o["field_" + action];
+            }
+            if (auth) {
+                return auth.indexOf(field) !== -1;
+            }
+            return false;
+        }
+
+        /**
+         * 是否有显示或操作字段的权限
+         * @param {String} action 操作名
+         * @param {String} field 查询的字段
+         */
+        function $check_field(action, field) {
+            var o = this.$get_power(this.$route.path);
+            var auth;
+            if (o && o[action] != 0 && o[action] != false) {
+                auth = o["field_" + action];
+            }
+            if (auth) {
+                return auth.indexOf(field) !== -1;
+            }
+            return false;
+        }
+
+        /**
+         * 获取路径对应操作权限 鉴权
+         * @param {String} action 操作名
+         */
+        function $check_exam(path, action = "get") {
+            var o = this.$get_power(path);
+            if (o) {
+                var option = JSON.parse(o.option);
+                if (option[action])
+                    return true
+            }
+            return false;
+        }
+
+
+
+        setTimeout(function () {
+            if (user_group == '管理员' || $check_action('/customized_goods/table', 'add') || $check_action('/customized_goods/view', 'add')) {
+                add.style.display = 'block'
+            }
+        }, 200)
+
+        setTimeout(function () {
+            if (user_group == '管理员' || $check_action('/customized_goods/table', 'del') || $check_action('/customized_goods/view', 'del')) {
+                deletes.style.display = 'block'
+            }
+        }, 200)
+
+
+        /*             if(user_group != "管理员"){
+                switch(user_group){
+                                                                        case "":
+                                url += "&trade_name=" + user_id
+                                break;
+                                                                                                                                            case "":
+                                url += "&enclosure=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&picture=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&video=" + user_id
+                                break;
+                                                                                                                                            case "":
+                                url += "&remarks=" + user_id
+                                break;
+                                                                                                case "卖家":
+                                url += "&seller_account_number=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&commodity_category=" + user_id
+                                break;
+                                                                                                                                            case "":
+                                url += "&details=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&production_time=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&date=" + user_id
+                                break;
+                                                                                                case "":
+                                url += "&special_price_or_not=" + user_id
+                                break;
+                                                            }
+            }
+         */
+
+        let token = sessionStorage.token || null
+        table.render({
+            elem: '#customized_goods'
+            , toolbar: true
+            , url: url
+            , page: {
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                //,curr: 5
+                , groups: 1
+                , first: false
+                , last: false
+            }
+            , cols: [[
+                { type: 'checkbox', fixed: 'left' }
+
+                , { field: 'trade_name', width: 180, title: '商品名称', sort: true }
+                , { field: 'stock', width: 180, title: '库存', sort: true }
+                , { field: 'enclosure', width: 180, title: '附件', sort: true }
+                , { field: 'enclosure', title: '附件', width: 150 }
+                , { field: 'picture', width: 180, title: '图片', sort: true }
+                , {
+                    field: 'picture',
+                    title: '图片',
+                    width: 150,
+                    templet: '<div><img src="http://127.0.0.1:5000{{ d.picture }}"></div>'
+                }
+                , { field: 'video', width: 180, title: '视频', sort: true }
+                , { field: 'video', title: '视频', width: 150 }
+                , { field: 'audio_frequency', width: 180, title: '音频', sort: true }
+                , { field: 'audio_frequency', title: '音频', width: 150 }
+                , { field: 'remarks', width: 180, title: '备注', sort: true }
+                , { field: 'seller_account_number', width: 180, title: '卖家账号', sort: true }
+                //, {field: 'sex', title: '卖家账号', sort: true, width: 150}
+                , { field: 'commodity_category', width: 180, title: '商品类别', sort: true }
+                , { field: 'price', width: 180, title: '价格', sort: true }
+                , { field: 'production_time', width: 180, title: '生产时间', sort: true }
+                , {
+                    field: 'production_time',
+                    title: '生产时间',
+                    sort: true,
+                    templet: "<div>{{layui.util.toDateString(d.production_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+                , { field: 'date', width: 180, title: '日期', sort: true }
+                , {
+                    field: 'date',
+                    title: '日期',
+                    sort: true,
+                    width: 150,
+                    templet: "<div>{{layui.util.toDateString(d.date, 'yyyy-MM-dd')}}</div>"
+                }
+                , { field: 'special_price_or_not', width: 180, title: '是否特价', sort: true }
+
+                , { field: 'examine_state', title: '审核状态', sort: true, width: 150 }
+
+
+
+                , {
+                    field: 'create_time',
+                    width: '20%',
+                    title: '新增时间',
+                    sort: true,
+                    templet: "<div>{{layui.util.toDateString(d.create_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+                , {
+                    field: 'update_time',
+                    width: '20%',
+                    title: '更新时间',
+                    sort: true,
+                    templet: "<div>{{layui.util.toDateString(d.update_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+                , { field: 'qrcode_title', title: '二维码标题', sort: true, width: 150 }
+                , {
+                    field: 'qrcode_img',
+                    title: '二维码图片',
+                    sort: true,
+                    width: 150,
+                    templet: '<div><img src="http://127.0.0.1:5000{{ d.qrcode_img}}"></div>'
+                }
+
+
+                , { field: 'timer_title', title: '计时器标题', sort: true, width: 150 }
+                , {
+                    field: 'timing_start_time',
+                    title: '计时开始时间',
+                    sort: true,
+                    width: 150,
+                    templet: "<div>{{layui.util.toDateString(d.timing_start_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+                , {
+                    field: 'timing_end_time',
+                    title: '计时结束时间',
+                    sort: true,
+                    width: 150,
+                    templet: "<div>{{layui.util.toDateString(d.timing_end_time, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                }
+
+                , { field: 'limit_times', title: '限制次数', sort: true, width: 150 }
+
+                , {
+                    field: 'operate', title: '操作', sort: true, width: '20%', fixed: 'right', toolbar: "#toolbarDemo"
+                }
+            ]]
+
+            , done: function (res, curr, count) { // 表格渲染完成之后的回调
+                if (res.count == null) { // 无数据时直接返回了
+                    return;
+                }
+
+                var trade_name = res.data[0].trade_name
+                if (user_group !== '管理员' || !$check_field('get', 'trade_name')) {
+                    $("[data-field='trade_name']").css('display', 'none');
+                }
+                var stock = res.data[0].stock
+                if (user_group !== '管理员' || !$check_field('get', 'stock')) {
+                    $("[data-field='stock']").css('display', 'none');
+                }
+                var enclosure = res.data[0].enclosure
+                if (user_group !== '管理员' || !$check_field('get', 'enclosure')) {
+                    $("[data-field='enclosure']").css('display', 'none');
+                }
+                var picture = res.data[0].picture
+                if (user_group !== '管理员' || !$check_field('get', 'picture')) {
+                    $("[data-field='picture']").css('display', 'none');
+                }
+                var video = res.data[0].video
+                if (user_group !== '管理员' || !$check_field('get', 'video')) {
+                    $("[data-field='video']").css('display', 'none');
+                }
+                var audio_frequency = res.data[0].audio_frequency
+                if (user_group !== '管理员' || !$check_field('get', 'audio_frequency')) {
+                    $("[data-field='audio_frequency']").css('display', 'none');
+                }
+                var remarks = res.data[0].remarks
+                if (user_group !== '管理员' || !$check_field('get', 'remarks')) {
+                    $("[data-field='remarks']").css('display', 'none');
+                }
+                var seller_account_number = res.data[0].seller_account_number
+                if (user_group !== '管理员' || !$check_field('get', 'seller_account_number')) {
+                    $("[data-field='seller_account_number']").css('display', 'none');
+                }
+                var commodity_category = res.data[0].commodity_category
+                if (user_group !== '管理员' || !$check_field('get', 'commodity_category')) {
+                    $("[data-field='commodity_category']").css('display', 'none');
+                }
+                var price = res.data[0].price
+                if (user_group !== '管理员' || !$check_field('get', 'price')) {
+                    $("[data-field='price']").css('display', 'none');
+                }
+                var production_time = res.data[0].production_time
+                if (user_group !== '管理员' || !$check_field('get', 'production_time')) {
+                    $("[data-field='production_time']").css('display', 'none');
+                }
+                var date = res.data[0].date
+                if (user_group !== '管理员' || !$check_field('get', 'date')) {
+                    $("[data-field='date']").css('display', 'none');
+                }
+                var special_price_or_not = res.data[0].special_price_or_not
+                if (user_group !== '管理员' || !$check_field('get', 'special_price_or_not')) {
+                    $("[data-field='special_price_or_not']").css('display', 'none');
+                }
+
+                var qrcode_title = res.data[0].qrcode_title
+                if (user_group !== '管理员' || !$check_field('get', 'qrcode_title')) {
+                    $("[data-field='qrcode_title']").css('display', 'none');
+                }
+                var qrcode_img = res.data[0].qrcode_img
+                if (user_group !== '管理员' || !$check_field('get', 'qrcode_img')) {
+                    $("[data-field='qrcode_img']").css('display', 'none');
+                }
+
+
+                var timer_title = res.data[0].timer_title
+                if (user_group !== '管理员' || !$check_field('get', 'timer_title')) {
+                    $("[data-field='timer_title']").css('display', 'none');
+                }
+
+                var limit_times = res.data[0].limit_times
+                if (user_group !== '管理员' || !$check_field('get', 'limit_times')) {
+                    $("[data-field='limit_times']").css('display', 'none');
+                }
+                // 重新渲染
+            }
+            , page: true,
+            request: {
+                limitName: 'size'
+            },
+            response: {
+                statusName: 'code', //规定返回/Back的状态码字段为code
+                statusCode: 200 //规定成功的状态码为200
+            },
+            parseData: function (res) {
+                return {
+                    "code": 200,
+                    "msg": "",
+                    "count": res.result.count,
+                    "data": res.result.list
+                }
+            },
+            where: { size: 10 }
+        });
+
+        table.on('tool(customized_goods)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+
+                window.location.href = "./view_add.html?" + data.customized_goods_id;
+            }
+            else if (obj.event == 'comments') {
+                window.location.href = "../comment/view_comments.html?" + data.user_id;
+            }
+
+            else if (obj.event === 'bank') {
+                window.location.href = "./view_add.html?";
+            }
+
+
+        });
+
+        //下拉框
+
+
+
+        /*
+local("seller_account_number","卖家","seller_account_number")
+let seller_account_number
+layui.form.on('select(seller_account_number)', function (data) {
+// 拿到自定义属性的参数
+request['seller_account_number'] = $(data.elem).find("option:selected").attr("seller_account_number")
+});*/
+        inits('http://127.0.0.1:5000/api/classification_information/get_list?', "commodity_category")
+        let commodity_category
+        layui.form.on('select(commodity_category)', function (data) {
+            request['commodity_category'] = data.elem[data.elem.selectedIndex].text
+        });
+        // 商品类别选项列表
+        let commodity_category_data = [""];
+        // 是否特价选项列表
+        let special_price_or_not_data = ['是', '否'];
+        async function special_price_or_not() {
+            var special_price_or_not = document.querySelector("#special_price_or_not")
+            var op1 = document.createElement("option");
+            op1.value = '0'
+            special_price_or_not.appendChild(op1)
+            // 收集数据 长度
+            var count
+            // 收集数据 数组
+            var arr = []
+            count = special_price_or_not_data.length
+            arr = special_price_or_not_data
+            for (var i = 0; i < arr.length; i++) {
+                // 创建节点
+                var op = document.createElement("option");
+                // 给节点赋值
+                op.innerHTML = arr[i]
+                op.value = i + 1
+                // 新增/Add节点
+                special_price_or_not.appendChild(op)
+                layui.form.render("select");
+            }
+        }
+
+        layui.form.on('select(special_price_or_not)', function (data) {
+            request.special_price_or_not = data.elem[data.elem.selectedIndex].text;
+        })
+        special_price_or_not()
+
+        // 请求参数：
+        let request = {
+            like: 0, size: 10, page: 1,
+            "trade_name": "",
+            "commodity_category": "",
+            "special_price_or_not": "",
+            trade_name: "",
+            stock: "",
+            enclosure: "",
+            picture: "",
+            video: "",
+            audio_frequency: "",
+            remarks: "",
+            seller_account_number: "",
+            commodity_category: "",
+            price: "",
+            details: "",
+            production_time: "",
+            date: "",
+            special_price_or_not: "",
+
+        }
+
+        // 重置/Reset参数
+        let resetName = { like: 0, size: 10, orderby: 'create_time desc' }
+
+        // 下拉框的重置/Reset参数
+        let resetSelect = []
+        //下拉框重置/Reset参数
+
+
+        resetSelect.push("seller_account_number")
+        resetSelect.push("commodity_category")
+        resetSelect.push("special_price_or_not")
+        fun('customized_goods', 'http://127.0.0.1:5000/api/customized_goods/del', 'customized_goods_id', request, resetName, resetSelect)
+    })
+</script>
+
+</html>

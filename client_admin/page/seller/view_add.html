@@ -1,0 +1,498 @@
+<!-- 新增/Add -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/diy.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        img {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+<article class="sign_in">
+    <div class="warp">
+        <div class="layui-container">
+            <div class="layui-row">
+                <form class="layui-form" action="">
+                                            <div class="layui-upload">
+                            <button type="button" class="layui-btn" id="seller">上传头像</button>
+                            <div class="layui-upload-list">
+                                <img class="layui-upload-img" id="seller_img">
+                                <p id="demoText"></p>
+                            </div>
+                            <div style="width: 95px;">
+                                <div class="layui-progress layui-progress-big" lay-showpercent="yes"
+                                     lay-filter="seller">
+                                    <div class="layui-progress-bar" lay-percent=""></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">账号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                       placeholder="请输入账号"
+                                       class="layui-input" id="username">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码</label>
+                            <div class="layui-input-block">
+                                <input type="password" name="password" placeholder="请输入密码" autocomplete="off"
+                                       class="layui-input"
+                                       id="password">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">昵称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                       placeholder="请输入昵称"
+                                       class="layui-input" id="nickname">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机号码</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                       placeholder="请输入手机号码"
+                                       class="layui-input" id="phone">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                       placeholder="请输入邮箱"
+                                       class="layui-input" id="email">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机认证</label>
+                            <div class="layui-input-block">
+                                <select name="interest" lay-filter="phone_state" id="phone_state">
+                                    <option value=""></option>
+                                    <option value="2">已认证</option>
+                                    <option value="0">未认证</option>
+                                    <option value="1">认证中</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱认证</label>
+                            <div class="layui-input-block">
+                                <select name="interest" lay-filter="email_state" id="email_state">
+                                    <option value=""></option>
+                                    <option value="2">已认证</option>
+                                    <option value="0">未认证</option>
+                                    <option value="1">认证中</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-block">
+                                <select name="interest" lay-filter="state" id="state">
+                                    <option value=""></option>
+                                    <option value="1">可用</option>
+                                    <option value="2">异常</option>
+                                    <option value="3">已冻结</option>
+                                    <option value="4">已注销</option>
+                                </select>
+                            </div>
+                        </div>
+
+                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">卖家账号</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入卖家账号"
+                                                       class="layui-input" id="seller_account_number">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">店铺名称</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入店铺名称"
+                                                       class="layui-input" id="store_name">
+                                            </div>
+                                        </div>
+                                                                                                                                                                            <div class="layui-form-item">
+                                <label class="layui-form-label">审核状态</label>
+                                <div class="layui-input-block">
+                                    <select name="interest" lay-filter="examine_state" id="examine_state">
+                                        <option value=""></option>
+                                        <option value="0">未审核</option>
+                                        <option value="1">已通过</option>
+                                        <option value="2">未通过</option>
+                                    </select>
+                                </div>
+                            </div>
+                        
+                        
+                                    </form>
+                <div class="layui-btn-container">
+                    <a href="#" type="button" class="layui-btn layui-btn-normal login" id="submit">确认/Confirm</a>
+                    <a href="./table.html" target="main_self_frame" type="button"
+                       class="layui-btn layui-btn-normal login">取消/Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+</body>
+<script src="../../layui/layui.js"></script>
+<script>
+    layui.use(['upload', 'element', 'layer', 'laydate', 'layedit'], function () {
+        var $ = layui.jquery
+                , upload = layui.upload
+                , element = layui.element
+                , layer = layui.layer
+                , laydate = layui.laydate
+                , layedit = layui.layedit
+                , form = layui.form;
+
+        let url
+
+        let token = sessionStorage.token || null
+
+        
+        let submit = document.querySelector('#submit')
+
+        
+            //常规使用 - 普通图片上传
+            var uploadInst = upload.render({
+                elem: '#seller'
+                , url: 'http://127.0.0.1:5000/api/seller/upload?' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
+                , headers: {
+                    'x-auth-token': token
+                }, before: function (obj) {
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function (index, file, result) {
+                        $('#seller_img').attr('src', result); //图片链接（base64）
+                    });
+
+                    element.progress('seller', '0%'); //进度条复位
+                    layer.msg('上传中', {icon: 16, time: 0});
+                }
+                , done: function (res) {
+                    //如果上传失败
+                    if (res.code > 0) {
+                        return layer.msg('上传失败');
+                    }
+                    //上传成功的一些操作
+                    //……
+                    url = res.result.url
+                    $('#demoText').html(''); //置空上传失败的状态
+                }
+                , error: function () {
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function () {
+                        uploadInst.upload();
+                    });
+                }
+                //进度条
+                , progress: function (n, elem, e) {
+                    element.progress('seller', n + '%'); //可配合 layui 进度条元素使用
+                    if (n == 100) {
+                        layer.msg('上传完毕', {icon: 1});
+                    }
+                }
+            });
+            let username = document.querySelector('#username')
+            let password = document.querySelector('#password')
+            let nickname = document.querySelector('#nickname')
+            let email = document.querySelector('#email')
+            let phone = document.querySelector('#phone')
+            let email_state = document.querySelector('#email_state')
+
+            let form_data = {
+                user_id: 0,
+                username: '',
+                nickname: '',
+                password: '',
+                avatar: '',
+                phone: '',
+                email: '',
+                user_group: "卖家",
+                phone_state: 0,
+                email_state: 0,
+                state: 1
+            }
+            let form_sub = {
+                                                        "seller_account_number":  '', // 卖家账号
+                                                                            "store_name":  '', // 店铺名称
+                                                                        "examine_state": form_data.examine_state,
+                                                "user_id": 0,
+                "seller_id": 0 // ID
+            }
+
+                            
+                                            
+                                        // 单选框点击事件
+            layui.form.on('select(email_state)', function (data) {
+                form_data.email_state = Number(data.elem[data.elem.selectedIndex].value);
+            })
+            layui.form.on('select(state)', function (data) {
+                form_data.state = Number(data.elem[data.elem.selectedIndex].value);
+            })
+            layui.form.on('select(phone_state)', function (data) {
+                form_data.phone_state = Number(data.elem[data.elem.selectedIndex].value);
+                console.log()
+            })
+
+                            layui.form.on('select(examine_state)', function (data) {
+                    form_sub.examine_state = data.elem[data.elem.selectedIndex].text;
+                })
+                        let seller = location.search.substring(1)
+
+                                                                                                                            //7
+                            let seller_account_number = document.querySelector("#seller_account_number")
+                            //7
+                                                                                                                                                                //三
+                            let store_name = document.querySelector("#store_name")
+                            //三
+                                                                                                
+            if (seller !== '') {
+                username.disabled = "disabled"
+                password.disabled = "disabled"
+                username.style.border = "none"
+                password.style.border = "none"
+
+
+                async function axios_get_4() {
+                    const {data: rese} = await axios.get('http://127.0.0.1:5000/api/user/get_obj', {
+                        params: {
+                            user_id: seller
+                        }
+                    })
+
+                    let data_2 = rese.result.obj
+                    Object.keys(form_data).forEach((key) => {
+                        form_data[key] = data_2[key];
+                    });
+                    console.log(form_data)
+                    for (let key in form_data) {
+                        if (key == 'avatar') {
+                                seller_img.src = 'http://127.0.0.1:5000' + form_data.avatar
+                        }
+                    }
+                    for (let key in form_data) {
+                        if (key == 'email_state') {
+                            let alls = document.querySelector('#email_state').querySelectorAll('option')
+                            let test = form_data[key]
+                            for (let i = 0; i < alls.length; i++) {
+                                if (alls[i].value == test) {
+                                    alls[i].selected = true
+                                    layui.use('form', function () {
+                                        var form = layui.form;
+                                        form.render("select");
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    for (let key in form_data) {
+                        if (key == 'phone_state') {
+                            let alls = document.querySelector('#phone_state').querySelectorAll('option')
+                            let test = form_data[key]
+                            for (let i = 0; i < alls.length; i++) {
+                                if (alls[i].value == test) {
+                                    alls[i].selected = true
+                                    layui.use('form', function () {
+                                        var form = layui.form;
+                                        form.render("select");
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    for (let key in form_data) {
+                        if (key == 'state') {
+                            let alls = document.querySelector('#state').querySelectorAll('option')
+                            let test = form_data[key]
+                            for (let i = 0; i < alls.length; i++) {
+                                if (alls[i].value == test) {
+                                    alls[i].selected = true
+                                    layui.use('form', function () {
+                                        var form = layui.form;
+                                        form.render("select");
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    username.value = form_data.username
+                    password.value = form_data.password
+                    nickname.value = form_data.nickname
+                    email.value = form_data.email
+                    phone.value = form_data.phone
+                }
+
+                axios_get_4()
+
+                async function axios_get_5() {
+                    const {data: rese} = await axios.get('http://127.0.0.1:5000/api/seller/get_obj', {
+                        params: {
+                            user_id: seller
+                        }
+                    })
+
+                    let data_2 = rese.result.obj
+                    Object.keys(form_sub).forEach((key) => {
+                        form_sub[key] = data_2[key];
+                    });
+
+                                            for (let key in data_2) {
+                            if (key == 'examine_state') {
+                                let alls = document.querySelector('#examine_state').querySelectorAll('option')
+                                let test = data_2[key]
+                                for (let i = 0; i < alls.length; i++) {
+                                    if (alls[i].innerHTML == test) {
+                                        alls[i].selected = true
+                                        layui.use('form', function () {
+                                            var form = layui.form;
+                                            form.render("select");
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    
+                                                                            seller_account_number.value = form_sub.seller_account_number
+                                                                                                    store_name.value = form_sub.store_name
+                                                                                                                                                                        }
+
+                axios_get_5()
+
+            }
+
+            submit.onclick = async function () {
+                form_data.username = username.value
+                form_data.password = password.value
+                form_data.nickname = nickname.value
+                form_data.email = email.value
+                form_data.password = password.value
+                form_data.phone = phone.value
+                form_data.avatar = url
+                                                                                                                                                    //7
+                                form_sub.seller_account_number = seller_account_number.value
+                                //7
+                                                                                                                                                                                                //三
+                                form_sub.store_name = store_name.value
+                                //三
+                                                                                                                    
+                if (!username.value) {
+                    layer.msg('账号不能为空');
+                } else if (!password.value) {
+                    layer.msg('密码不能为空');
+                } else if (nickname.value.length > 12 || nickname.value.length < 2) {
+                    layer.msg('昵称长度应为2到12个字符之间');
+                } else if (form_data) {
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/user/register?', form_data, {
+                        headers: {
+                            'x-auth-token': token,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    if (res.result == 1) {
+                        Object.keys(form_data).forEach(item => {
+                            if (form_data[item] === '') delete form_data[item]
+                            if (form_data[item] === null) delete form_data[item]
+                        })
+                        const {data: res} = await axios.get('http://127.0.0.1:5000/api/user/get_obj', {
+                            params: {
+                                username: form_data.username,
+                                nickname: form_data.nickname,
+                                avatar: form_data.avatar,
+                                phone: form_data.phone,
+                                email: form_data.email,
+                                user_group: form_data.user_group,
+                                phone_state: form_data.phone_state,
+                                email_state: form_data.email_state,
+                                state: form_data.state
+                            }
+                        })
+                        let id = res.result.obj.user_id
+
+                        form_sub.user_id = id
+
+                                                                                                                                                                                                    //多文本
+                                form_sub.seller_account_number = seller_account_number.value
+                                //多文本
+                                                                                                                                            //文本
+                                form_sub.store_name = store_name.value
+                                //文本
+                                                                                                                                                            }
+                }
+                if (seller == '') {
+                    console.log("新增/Add")
+                    const {data: ress} = await axios.post('http://127.0.0.1:5000/api/seller/add?', form_sub, {
+                        headers: {
+                            'x-auth-token': token,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    if (ress.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                } else {
+                                                                                                                                                                        //多文本
+                            form_sub.seller_account_number = seller_account_number.value
+                            //多文本
+                                                                                                                        //文本
+                            form_sub.store_name = store_name.value
+                            //文本
+                                                                                                                                        console.log("详情/Details")
+                    const {data: res_data} = await axios.post('http://127.0.0.1:5000/api/user/set?user_id=' + form_data.user_id, form_data, {
+                        headers: {
+                            'x-auth-token': token,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    console.log(res_data)
+                    const {data: res_data2} = await axios.post('http://127.0.0.1:5000/api/seller/set?seller_id=' + form_sub.seller_id, form_sub, {
+                        headers: {
+                            'x-auth-token': token,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    console.log(res_data2)
+                    if (res_data2.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                }
+            }
+                                                                                                                                                    
+    })
+    ;
+</script>
+
+</html>

@@ -1,0 +1,326 @@
+<!-- 首页 -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>首页</title>
+    <!-- 引入刚刚下载的 ECharts 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/echarts.js"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <link rel="stylesheet" href="../css/diy.css">
+
+</head>
+<style>
+    canvas {
+        position: relative !important;
+    }
+
+    #test div::before {
+        content: '';
+        width: 100px;
+        position: absolute;
+        top: 154px;
+        right: 129px;
+        z-index: 999;
+        height: 20px;
+        background-color: #FFFFFF;
+    }
+
+    #i {
+        position: fixed;
+        top: 400px;
+        right: 100px;
+        z-index: 1000;
+    }
+</style>
+
+<body>
+<div>
+    <div class="layui-col-md">
+        <div class="layui-panel">
+            <div id="i"></div>
+        </div>
+    </div>
+</div>
+<!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+
+                                                                                                                                                                                                                                                                                                                            <div class="box">
+                    <div id="commodity_category" style="width: 600px;height:400px;"></div>
+                </div>
+                                                                                                                                                                                                    <div class="box">
+            <div id="columnar" style="width: 600px;height:400px;"></div>
+        </div>
+                                                
+        <div id="test" align="center" style="margin:0 auto;">
+        <div style="width:1000px;height:500px;overflow:hidden;border:0px; margin-top: 100px; position: relative;">
+            <div style="margin:-350px -100px 0px -280px;position:relative"> #这里的position = relative 是必须的
+                <iframe src="https://dun.163.com/trial/face/compare" id="ifyemian" scrolling="no" frameborder="0"
+                        style="position:absolute;
+     width: 100%;
+    height: 1040px;
+     display:block;
+     left: 0;
+     right:0;">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    
+        <div align="center" style="margin:0 auto;">
+        <div style="width:100%;height:370px;overflow:hidden;border:0px">
+            <div style="margin:-102px 0px 0px -10px;position:relative"> #这里的position = relative 是必须的
+                <iframe src="https://www.iciba.com/fy" id="ifyemian" scrolling="no" frameborder="0" style="position:absolute;
+                  width: 100%;
+                  height: 570px;
+                  display:block;
+                  left: 0;
+                  right:0;">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+    let personInfo = JSON.parse(sessionStorage.personInfo)
+
+    // 请求数据
+
+    async function get_list() {
+        let {data: ren} = await axios.get('http://127.0.0.1:5000/api/auth/get_list', {
+            params: {
+                user_group: personInfo.user_group
+            }
+        })
+        permissions = ren.result.list
+    }
+
+    get_list()
+
+    function $get_power(path) {
+        var list = permissions;
+        var obj;
+        for (var i = 0; i < list.length; i++) {
+            var o = list[i];
+            if (o.path === path) {
+                obj = o;
+                break;
+            }
+        }
+        return obj;
+    }
+
+    /**
+     * 是否有统计字段的权限
+     */
+        function $check_figure(path) {
+        var o = this.$get_power(path);
+        if (o){
+            var option = JSON.parse(o.option);
+            if (option.figure)
+                return true
+        }
+        return false;
+    }
+
+        function $check_comment(path) {
+        var o = this.$get_power(path);
+        if (o){
+            var option = JSON.parse(o.option);
+            if (option.can_show_comment)
+                return true
+        }
+        return false;
+    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                            let commodity_category = document.querySelector('#commodity_category')
+                    setTimeout(function () {
+                        if (user_group !== '管理员' || !$check_figure('/customized_goods/table')){
+                                commodity_category.style.display = 'none'
+                        }
+                    }, 200)
+                                                                                                                                                                                                                                                        
+                                                                                
+
+
+    async function echartsFun(id, url, title) {
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById(id));
+        let {data: res} = await axios.get(url)
+
+        let user_group = personInfo.user_group
+        let user_id = personInfo.user_id
+
+                                                                                                                                                                                                
+        let arr = []
+
+        arr = res.result.list.map((o) => {
+            return {
+                name: o[1],
+                value: o[0]
+            };
+        });
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: title,
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                    name: '参数',
+                    type: 'pie',
+                    radius: '50%',
+                    data: arr,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+                                                                                                                                                                                                
+    async function echartsFun1(id,url,title) {
+        var myChart = echarts.init(document.getElementById(id));
+
+        let user_group = personInfo.user_group
+        let user_id = personInfo.user_id
+
+                                                                                                                                                                                                
+        let {data: res} = await axios.get(url)
+        let obj = {}
+        let arr1 = []
+        let arr2 = []
+        let arr3 = []
+
+        for (let i = 0; i < res.result.list.length; i++) {
+            arr1.push(res.result.list[i][0])
+            arr2.push(res.result.list[i][1])
+            arr3.push(res.result.list[i][2])
+        }
+
+        var option = {
+            title: {
+                text: title,
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            legend: {
+                data: ['Evaporation', 'Precipitation', 'Temperature']
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: arr1,
+                    axisLabel: {
+                        inside: false,
+                        textStyle: {
+                            color: '#000',
+                            fontSize: '10',
+                            itemSize: ''
+
+                        }
+                    },
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+
+                },
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '数量',
+                    min: 0,
+                    max: 40,
+                    interval: 10,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '',
+                    min: 0,
+                    max: 40,
+                    interval: 10,
+                    axisLabel: {
+                        formatter: ''
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '价格',
+                    type: 'bar',
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    data: arr2
+                },
+                {
+                    name: '库存',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    data: arr3
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    let ii = document.querySelector('#i')
+    let i
+
+    async function axioss() {
+        const {data: res} = await axios.get('http://127.0.0.1:5000/api/user/count')
+        i = res.result
+        ii.innerHTML = "用户数量" + i + "人"
+    }
+
+    axioss()
+</script>
+</body>
+
+</html>

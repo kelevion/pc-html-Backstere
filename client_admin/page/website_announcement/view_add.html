@@ -1,0 +1,279 @@
+<!-- 新增/Add -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/diy.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        img {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+<article class="sign_in">
+    <div class="warp">
+        <div class="layui-container">
+            <div class="layui-row">
+                <form class="layui-form" action="">
+                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">标题</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入标题"
+                                                       class="layui-input" id="title">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">发布人</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入发布人"
+                                                       class="layui-input" id="publisher">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                        <div class="layui-form-item">
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">发布时间</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" class="layui-input" id="release_time"
+                                                       placeholder="yyyy-MM-dd HH:mm:ss">
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">文件</label>
+                                            <div class="layui-upload-drag" id="relevant_accessories">
+                                                <i class="layui-icon"></i>
+                                                <p>将文件拖到此处,或点击上传</p>
+                                                <div class="layui-hide" id="relevant_accessories">
+                                                    <hr>
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                                                                                                                                                                    <div class="layui-form-item">
+                                    <label class="layui-form-label">详情</label>
+                                    <div class="layui-input-block">
+                                        <textarea id="demo" style="display: none;"></textarea>
+                                    </div>
+                                </div>
+                                                                            
+                                                
+                        
+                                                                                    </form>
+                <div class="layui-btn-container">
+                    <a href="#" type="button" class="layui-btn layui-btn-normal login" id="submit">确认/Confirm</a>
+                    <a href="./table.html" target="main_self_frame" type="button"
+                       class="layui-btn layui-btn-normal login">取消/Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+</body>
+<script src="../../layui/layui.js"></script>
+<script>
+    layui.use(['upload', 'element', 'layer', 'laydate', 'layedit'], function () {
+        var $ = layui.jquery
+                , upload = layui.upload
+                , element = layui.element
+                , layer = layui.layer
+                , laydate = layui.laydate
+                , layedit = layui.layedit
+                , form = layui.form;
+
+        let url
+
+        let token = sessionStorage.token || null
+
+        
+        let submit = document.querySelector('#submit')
+
+                    let field = "website_announcement_id";
+            let url_add = "website_announcement";
+            let url_set = "website_announcement";
+            let url_get_obj = "website_announcement";
+            let url_upload = "website_announcement"
+            let query = {
+                "website_announcement_id": 0,
+            }
+
+            let form_data2 = {
+                                                        "title":  '', // 标题
+                                                                            "publisher":  '', // 发布人
+                                                                            "release_time":  '', // 发布时间
+                                                                            "relevant_accessories":  '', // 相关附件
+                                                                            "details":  '', // 详情
+                                                                                                    "website_announcement_id": 0, // ID
+                                                                                            }
+
+                                                                                                                                                                                                                                                                                                                var demo = layedit.build('demo', {
+                        tool: [
+                            'strong' //加粗
+                            , 'italic' //斜体
+                            , 'underline' //下划线
+                            , 'del' //删除/Del线
+
+                            , '|' //分割线
+
+                            , 'left' //左对齐
+                            , 'center' //居中对齐
+                            , 'right' //右对齐
+                            , 'link' //超链接
+                            , 'unlink' //清除链接
+                            , 'face' //表情
+                            , 'image' //插入图片
+                            , 'help' //帮助
+                        ]
+                    });
+                                        
+                            
+                            
+                            
+                            
+                            
+            
+                                                                                                                                                                        upload.render({
+                            elem: '#relevant_accessories'
+                            , url: 'http://127.0.0.1:5000/api/website_announcement/upload'
+                            , headers: {
+                                'x-auth-token': token
+                            } //此处配置你自己的上传接口即可
+                            , accept: 'file' //普通文件
+                            , done: function (res) {
+                                layer.msg('上传成功');
+                                form_data2.relevant_accessories = res.result.url
+                            }
+                        });
+                                                                                                        
+                                                                            
+                                                                            
+                                                    laydate.render({
+                        elem: '#release_time'
+                        , type: 'datetime'
+                        , done: function (value) {
+                            console.log(value)
+                            form_data2.release_time = value
+                        }
+                    });
+                                                            
+                                                                            
+                                                            
+            
+                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                        
+                                                //文本
+                    let title = document.querySelector("#title")
+                    //文本
+                                                                                                //文本
+                    let publisher = document.querySelector("#publisher")
+                    //文本
+                                                                                                                                                                                                                                                            
+            let website_announcement = location.search.substring(1)
+            if (website_announcement !== '') {
+                async function axios_get_3() {
+                    const {data: rese} = await axios.get('http://127.0.0.1:5000/api/website_announcement/get_obj', {
+                        params: {
+                                website_announcement_id: website_announcement
+                        }
+                    })
+
+                    let data = rese.result.obj
+                    Object.keys(form_data2).forEach((key) => {
+                        form_data2[key] = data[key];
+                    });
+                    console.log(form_data2)
+                    
+                                                                
+                                            
+                                            
+                                            
+                                            
+                                        console.log(form_data2)
+                                                                        //文本
+                                title.value = form_data2.title
+                            //文本
+                                                                                                                                                //文本
+                                publisher.value = form_data2.publisher
+                            //文本
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                
+                                                                                                            release_time.value = layui.util.toDateString(form_data2.release_time, "yyyy-MM-dd HH:mm:ss")
+                                                    
+                                                                                                
+                                                                        layedit.setContent(demo, form_data2.details)
+                        
+                                        layui.form.render("select");
+                }
+
+                axios_get_3()
+            }
+
+
+            submit.onclick = async function () {
+                try {
+                                                                                                                                                    //文本
+                            form_data2.title = title.value
+                            //文本
+                                                                                                                                                                                                                            //文本
+                            form_data2.publisher = publisher.value
+                            //文本
+                                                                                                                                                                                form_data2.release_time = layui.util.toDateString(form_data2.release_time, "yyyy-MM-dd HH:mm:ss")
+                                                                                                                                                                                                                                                                                                                                                                            form_data2.details = layedit.getContent(demo)
+                                                                                                                                    } catch (err) {
+                    console.log(err)
+                }
+                                                
+                                
+                if (website_announcement == '') {
+                    console.log("新增/Add")
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/website_announcement/add?',
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                                        if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                } else {
+                    console.log("详情/Details")
+                    
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/website_announcement/set?website_announcement_id=' +website_announcement,
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                    if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                }
+            }
+        
+    })
+    ;
+</script>
+
+</html>

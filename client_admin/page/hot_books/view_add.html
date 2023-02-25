@@ -1,0 +1,404 @@
+<!-- 新增/Add -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/diy.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        img {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+<article class="sign_in">
+    <div class="warp">
+        <div class="layui-container">
+            <div class="layui-row">
+                <form class="layui-form" action="">
+                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">图书编号</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入图书编号"
+                                                       class="layui-input" id="book_number">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">图书名称</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入图书名称"
+                                                       class="layui-input" id="book_name">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                        <div class="layui-upload">
+                                        <button type="button" class="layui-btn" id="cover">上传图片</button>
+                                        <div class="layui-upload-list">
+                                            <img class="layui-upload-img" id="cover_img">
+                                            <p id="demoText"></p>
+                                        </div>
+                                        <div style="width: 95px;">
+                                            <div class="layui-progress layui-progress-big" lay-showpercent="yes"
+                                                 lay-filter="cover">
+                                                <div class="layui-progress-bar" lay-percent=""></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">作者</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入作者"
+                                                       class="layui-input" id="author">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                        <div class="layui-form-item">
+                                        <label class="layui-form-label">商品类别</label>
+                                        <div class="layui-input-block">
+                                            <select name="interest" lay-filter="commodity_category" id="commodity_category">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">库存</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入库存"
+                                                       class="layui-input" id="stock">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">价格</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入价格"
+                                                       class="layui-input" id="price">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                        <div class="layui-form-item layui-form-text">
+                                        <label class="layui-form-label">简介</label>
+                                        <div class="layui-input-block">
+                                            <textarea placeholder="请输入简介" class="layui-textarea"
+                                                      id="brief_introduction"></textarea>
+                                        </div>
+                                    </div>
+                                                                                                            
+                                                
+                        
+                                                                                    </form>
+                <div class="layui-btn-container">
+                    <a href="#" type="button" class="layui-btn layui-btn-normal login" id="submit">确认/Confirm</a>
+                    <a href="./table.html" target="main_self_frame" type="button"
+                       class="layui-btn layui-btn-normal login">取消/Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+</body>
+<script src="../../layui/layui.js"></script>
+<script>
+    layui.use(['upload', 'element', 'layer', 'laydate', 'layedit'], function () {
+        var $ = layui.jquery
+                , upload = layui.upload
+                , element = layui.element
+                , layer = layui.layer
+                , laydate = layui.laydate
+                , layedit = layui.layedit
+                , form = layui.form;
+
+        let url
+
+        let token = sessionStorage.token || null
+
+        
+        let submit = document.querySelector('#submit')
+
+                    let field = "hot_books_id";
+            let url_add = "hot_books";
+            let url_set = "hot_books";
+            let url_get_obj = "hot_books";
+            let url_upload = "hot_books"
+            let query = {
+                "hot_books_id": 0,
+            }
+
+            let form_data2 = {
+                                                        "book_number":  '', // 图书编号
+                                                                            "book_name":  '', // 图书名称
+                                                                            "cover":  '', // 封面
+                                                                            "author":  '', // 作者
+                                                                            "commodity_category":  '', // 商品类别
+                                                                            "stock":  '', // 库存
+                                                                            "price":  '', // 价格
+                                                                            "brief_introduction":  '', // 简介
+                                                                                                    "hot_books_id": 0, // ID
+                                                                                            }
+
+                                                                                                                                                                                                        //常规使用 - 普通图片上传
+                        var uploadInst = upload.render({
+                            elem: '#cover'
+                            , url: 'http://127.0.0.1:5000/api/hot_books/upload?' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
+                            , headers: {
+                                'x-auth-token': token
+                            }, before: function (obj) {
+                                //预读本地文件示例，不支持ie8
+                                obj.preview(function (index, file, result) {
+                                    $('#cover_img').attr('src', result); //图片链接（base64）
+                                });
+
+                                element.progress('cover', '0%'); //进度条复位
+                                layer.msg('上传中', {icon: 16, time: 0});
+                            }
+                            , done: function (res) {
+                                //如果上传失败
+                                if (res.code > 0) {
+                                    return layer.msg('上传失败');
+                                }
+                                //上传成功的一些操作
+                                //……
+                                form_data2.cover = res.result.url
+                                $('#demoText').html(''); //置空上传失败的状态
+                            }
+                            , error: function () {
+                                //演示失败状态，并实现重传
+                                var demoText = $('#demoText');
+                                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                                demoText.find('.demo-reload').on('click', function () {
+                                    uploadInst.upload();
+                                });
+                            }
+                            //进度条
+                            , progress: function (n, elem, e) {
+                                element.progress('cover', n + '%'); //可配合 layui 进度条元素使用
+                                if (n == 100) {
+                                    layer.msg('上传完毕', {icon: 1});
+                                }
+                            }
+                        });
+                                                                                                                                                                                                                                                                                                                                                                                            
+                            
+                            
+                            
+                            
+                                                // 商品类别选项列表
+                    let commodity_category_data = [""];
+                
+                            
+                            
+                            
+            
+                                                                                                                                                                                                                                                                                    
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                            
+            
+                                            
+                                                            
+                                                            
+                                                            
+                                                                async function commodity_category() {
+                        var commodity_category = document.querySelector("#commodity_category")
+                        var op1 = document.createElement("option");
+                        op1.value = '0'
+                            commodity_category.appendChild(op1)
+                        // 收集数据 长度
+                        var count
+                        // 收集数据 数组
+                        var arr = []
+                        let {data: res} = await axios.get('http://127.0.0.1:5000/api/classification_information/get_list')
+                        count = res.result.count
+                        arr = res.result.list
+                        for (var i = 0; i < arr.length; i++) {
+                            // 创建节点
+                            var op = document.createElement("option");
+                            // 给节点赋值
+                            op.innerHTML = arr[i].commodity_category
+                            op.value = i + 1
+                            // 新增/Add节点
+                                commodity_category.appendChild(op)
+                            layui.form.render("select");
+                        }
+                    }
+
+                    layui.form.on('select(commodity_category)', function (data) {
+                        form_data2.commodity_category = data.elem[data.elem.selectedIndex].text;
+                    })
+                        commodity_category()
+                                
+                                                            
+                                                            
+                                                            
+                                        
+                                                //文本
+                    let book_number = document.querySelector("#book_number")
+                    //文本
+                                                                                                //文本
+                    let book_name = document.querySelector("#book_name")
+                    //文本
+                                                                                                                                                            //文本
+                    let author = document.querySelector("#author")
+                    //文本
+                                                                                                                                                            //文本
+                    let stock = document.querySelector("#stock")
+                    //文本
+                                                                                                //文本
+                    let price = document.querySelector("#price")
+                    //文本
+                                                                                                                                //多文本
+                    let brief_introduction = document.querySelector("#brief_introduction")
+                    //多文本
+                                        
+            let hot_books = location.search.substring(1)
+            if (hot_books !== '') {
+                async function axios_get_3() {
+                    const {data: rese} = await axios.get('http://127.0.0.1:5000/api/hot_books/get_obj', {
+                        params: {
+                                hot_books_id: hot_books
+                        }
+                    })
+
+                    let data = rese.result.obj
+                    Object.keys(form_data2).forEach((key) => {
+                        form_data2[key] = data[key];
+                    });
+                    console.log(form_data2)
+                    
+                                                                
+                                            
+                                            
+                                            
+                                                                        for (let key in data) {
+                                if (key == 'commodity_category') {
+                                    let alls = document.querySelector('#commodity_category').querySelectorAll('option')
+                                    let test = data[key]
+                                    for (let i = 0; i < alls.length; i++) {
+                                        if (alls[i].innerHTML == test) {
+                                            alls[i].selected = true
+                                            layui.use('form', function () {
+                                                var form = layui.form;
+                                                form.render("select");
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        
+                                            
+                                            
+                                            
+                                        console.log(form_data2)
+                                                                        //文本
+                                book_number.value = form_data2.book_number
+                            //文本
+                                                                                                                                                //文本
+                                book_name.value = form_data2.book_name
+                            //文本
+                                                                                                                                                                                                                                            //文本
+                                author.value = form_data2.author
+                            //文本
+                                                                                                                                                                                                                                            //文本
+                                stock.value = form_data2.stock
+                            //文本
+                                                                                                                                                //文本
+                                price.value = form_data2.price
+                            //文本
+                                                                                                                                                                                                //多文本
+                                brief_introduction.value = form_data2.brief_introduction
+                            //多文本
+                                                                                                                                                                                                        
+                                                                                                
+                                                                                                        let cover_img = document.querySelector("#cover_img")
+                                    cover_img.src = 'http://127.0.0.1:5000' + form_data2.cover
+                                                    
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                
+                                        layui.form.render("select");
+                }
+
+                axios_get_3()
+            }
+
+
+            submit.onclick = async function () {
+                try {
+                                                                                                                                                    //文本
+                            form_data2.book_number = book_number.value
+                            //文本
+                                                                                                                                                                                                                            //文本
+                            form_data2.book_name = book_name.value
+                            //文本
+                                                                                                                                                                                                                                                                                                                                                                                                                                //文本
+                            form_data2.author = author.value
+                            //文本
+                                                                                                                                                                                                                                                                                                                                                                                                    //文本
+                            form_data2.stock = stock.value
+                            //文本
+                                                                                                                                                                                                                            //文本
+                            form_data2.price = price.value
+                            //文本
+                                                                                                                                                                                                                                                                            //多文本
+                            form_data2.brief_introduction = brief_introduction.value
+                            //多文本
+                                                            } catch (err) {
+                    console.log(err)
+                }
+                                                
+                                
+                if (hot_books == '') {
+                    console.log("新增/Add")
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/hot_books/add?',
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                                        if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                } else {
+                    console.log("详情/Details")
+                    
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/hot_books/set?hot_books_id=' +hot_books,
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                    if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                }
+            }
+        
+    })
+    ;
+</script>
+
+</html>

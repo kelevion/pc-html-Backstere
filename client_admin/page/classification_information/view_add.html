@@ -1,0 +1,215 @@
+<!-- 新增/Add -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/diy.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        img {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+<article class="sign_in">
+    <div class="warp">
+        <div class="layui-container">
+            <div class="layui-row">
+                <form class="layui-form" action="">
+                                                                                                                                                                                                            <div class="layui-form-item">
+                                            <label class="layui-form-label">商品类别</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入商品类别"
+                                                       class="layui-input" id="commodity_category">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">类别</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入类别"
+                                                       class="layui-input" id="category">
+                                            </div>
+                                        </div>
+                                                                                                                                                                                                                                                                <div class="layui-form-item">
+                                            <label class="layui-form-label">定制类别</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                                       placeholder="请输入定制类别"
+                                                       class="layui-input" id="custom_category">
+                                            </div>
+                                        </div>
+                                                                                                                                                
+                                                
+                        
+                                                                                    </form>
+                <div class="layui-btn-container">
+                    <a href="#" type="button" class="layui-btn layui-btn-normal login" id="submit">确认/Confirm</a>
+                    <a href="./table.html" target="main_self_frame" type="button"
+                       class="layui-btn layui-btn-normal login">取消/Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+</body>
+<script src="../../layui/layui.js"></script>
+<script>
+    layui.use(['upload', 'element', 'layer', 'laydate', 'layedit'], function () {
+        var $ = layui.jquery
+                , upload = layui.upload
+                , element = layui.element
+                , layer = layui.layer
+                , laydate = layui.laydate
+                , layedit = layui.layedit
+                , form = layui.form;
+
+        let url
+
+        let token = sessionStorage.token || null
+
+        
+        let submit = document.querySelector('#submit')
+
+                    let field = "classification_information_id";
+            let url_add = "classification_information";
+            let url_set = "classification_information";
+            let url_get_obj = "classification_information";
+            let url_upload = "classification_information"
+            let query = {
+                "classification_information_id": 0,
+            }
+
+            let form_data2 = {
+                                                        "commodity_category":  '', // 商品类别
+                                                                            "category":  '', // 类别
+                                                                            "custom_category":  '', // 定制类别
+                                                                                                    "classification_information_id": 0, // ID
+                                                                                            }
+
+                                                                                                                                                                                                                        
+                            
+                            
+                            
+            
+                                                                                                                                        
+                                                                            
+                                                                            
+                                                            
+            
+                                            
+                                                            
+                                                            
+                                        
+                                                //文本
+                    let commodity_category = document.querySelector("#commodity_category")
+                    //文本
+                                                                                                //文本
+                    let category = document.querySelector("#category")
+                    //文本
+                                                                                                //文本
+                    let custom_category = document.querySelector("#custom_category")
+                    //文本
+                                                                        
+            let classification_information = location.search.substring(1)
+            if (classification_information !== '') {
+                async function axios_get_3() {
+                    const {data: rese} = await axios.get('http://127.0.0.1:5000/api/classification_information/get_obj', {
+                        params: {
+                                classification_information_id: classification_information
+                        }
+                    })
+
+                    let data = rese.result.obj
+                    Object.keys(form_data2).forEach((key) => {
+                        form_data2[key] = data[key];
+                    });
+                    console.log(form_data2)
+                    
+                                                                
+                                            
+                                            
+                                        console.log(form_data2)
+                                                                        //文本
+                                commodity_category.value = form_data2.commodity_category
+                            //文本
+                                                                                                                                                //文本
+                                category.value = form_data2.category
+                            //文本
+                                                                                                                                                //文本
+                                custom_category.value = form_data2.custom_category
+                            //文本
+                                                                                                                                                                                                                                                        
+                                                                                                
+                                                                                                
+                                        layui.form.render("select");
+                }
+
+                axios_get_3()
+            }
+
+
+            submit.onclick = async function () {
+                try {
+                                                                                                                                                    //文本
+                            form_data2.commodity_category = commodity_category.value
+                            //文本
+                                                                                                                                                                                                                            //文本
+                            form_data2.category = category.value
+                            //文本
+                                                                                                                                                                                                                            //文本
+                            form_data2.custom_category = custom_category.value
+                            //文本
+                                                                                                            } catch (err) {
+                    console.log(err)
+                }
+                                                
+                                
+                if (classification_information == '') {
+                    console.log("新增/Add")
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/classification_information/add?',
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                                        if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                } else {
+                    console.log("详情/Details")
+                    
+                    const {data: res} = await axios.post('http://127.0.0.1:5000/api/classification_information/set?classification_information_id=' +classification_information,
+                            form_data2, {
+                                headers: {
+                                    'x-auth-token': token,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                    if (res.result == 1) {
+                        layer.msg('确认/Confirm完毕');
+                        setTimeout(function () {
+                            window.location.replace("./table.html");
+                        }, 1000)
+                    }
+                }
+            }
+        
+    })
+    ;
+</script>
+
+</html>
